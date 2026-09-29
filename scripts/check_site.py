@@ -1,4 +1,4 @@
-"""Validate the static page, manuscript abstract, and shipped interactive models.
+"""Validate the static page, approved abstract, and shipped interactive models.
 
 Run with Python 3.9+; no third-party packages or source dataset are required.
 """
@@ -123,14 +123,17 @@ def main():
     actual_abstract = ' '.join(''.join(page.abstract).split())
     if page.abstract_count != 1 or actual_abstract != expected_abstract:
         errors.append('Abstract must match scripts/paper-abstract.txt exactly after whitespace normalization')
-    if len(expected_abstract.split()) != 203:
-        errors.append('Expected the 203-word manuscript abstract fixture')
-    if page.paper_href != 'paper/iclr2027_conference.pdf':
-        errors.append('Default paper link must reference paper/iclr2027_conference.pdf')
+    if not expected_abstract:
+        errors.append('The approved abstract fixture must not be empty')
     release = (ROOT / 'release-config.js').read_text()
     paper_config = re.search(r'\bpaper\s*:\s*["\']([^"\']*)["\']', release)
-    if not paper_config or paper_config.group(1) != 'paper/iclr2027_conference.pdf':
-        errors.append('Default release paper must reference paper/iclr2027_conference.pdf')
+    if not paper_config:
+        errors.append('release-config.js must define the paper URL (empty until publication)')
+    elif paper_config.group(1).strip():
+        paper_url = paper_config.group(1).strip()
+        if urlsplit(paper_url).scheme not in ('', 'http', 'https'):
+            errors.append('Paper URL must be an HTTP(S) URL or a local file')
+        references.add(paper_url)
 
     models = read_assignment('model-data.js', 'MODEL_ASSETS')
     if not isinstance(models, list):
@@ -201,7 +204,7 @@ def main():
     errors.extend(f'Large asset: {path.relative_to(ROOT)}' for path in assets if path.stat().st_size > 95 * 1024 * 1024)
     if errors:
         raise SystemExit('\n'.join(errors))
-    print(f'OK: {len(references)} references and anchors; {len(models)} interactive textured GLBs; exact 203-word paper abstract.')
+    print(f'OK: {len(references)} references and anchors; {len(models)} interactive textured GLBs; exact {len(expected_abstract.split())}-word approved abstract.')
     print(f'Assets: {sum(path.stat().st_size for path in assets) / 1024**2:.1f} MiB.')
 
 
