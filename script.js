@@ -398,14 +398,24 @@
   });
   viewport.addEventListener('pointercancel', () => { swipe = null; });
 
-  // Empty release fields stay out of the interface until real resources exist.
+  // Activate resource links when their release URLs are available.
   ['paper', 'code', 'model'].forEach(key => {
     if (typeof release[key] !== 'string' || !release[key].trim()) return;
     try {
       const url = new URL(release[key], location.href);
       if (!['http:', 'https:'].includes(url.protocol)) return;
-      const link = document.querySelector(`[data-resource="${key}"]`);
-      if (!(link instanceof HTMLAnchorElement)) return;
+      let link = document.querySelector(`[data-resource="${key}"]`);
+      if (!link) return;
+      if (!(link instanceof HTMLAnchorElement)) {
+        const anchor = make('a', 'resource-button');
+        anchor.dataset.resource = key;
+        anchor.append(...link.childNodes);
+        link.replaceWith(anchor);
+        link = anchor;
+      }
+      link.classList.remove('is-pending');
+      link.removeAttribute('aria-disabled');
+      link.querySelector('.resource-note')?.remove();
       link.href = url.href;
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
