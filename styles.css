@@ -123,11 +123,16 @@ model-viewer{display:block;width:100%;height:100%;--poster-color:#fafbf9;--progr
 .footer{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--line);padding-block:32px;font-size:16px;color:var(--muted)}
 .citation{max-width:960px;border-top:1px solid var(--line)}
 .citation h2{text-align:center}
-.citation-top{display:flex;justify-content:space-between;align-items:center;margin-top:28px;font-size:14px;color:var(--muted)}
-.citation-top button{border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:7px 18px;min-height:44px;color:var(--ink)}
-.citation-top button:hover{background:#e4ece7}
-.citation pre{margin:14px 0 0;padding:24px;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px;font-size:clamp(12px,1.2vw,14px);line-height:1.8;text-align:left;tab-size:2}
-#copy-status{margin-top:10px;font-size:13px}
+.citation-copy{position:relative;margin-top:28px;cursor:pointer;border-radius:8px;outline:none}
+.citation-copy pre{margin:0;padding:24px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--surface);border:1px solid var(--line);border-radius:8px;font-size:clamp(12px,1.2vw,14px);line-height:1.8;text-align:left;tab-size:2;transition:background .18s,border-color .18s}
+.citation-copy:hover pre,.citation-copy:focus-visible pre{background:#edf2ef;border-color:#a9bfba}
+.citation-copy:focus-visible{outline:2px solid var(--accent);outline-offset:5px}
+.citation-copy::after,.citation-feedback{position:absolute;right:18px;bottom:18px;max-width:calc(100% - 64px);padding:3px 9px;border-radius:4px;background:var(--surface);color:var(--muted);font-size:13px;line-height:1.6;pointer-events:none;opacity:0;transition:opacity .18s}
+.citation-copy::after{content:"Click to copy"}
+.citation-copy:not(.has-feedback):hover::after,.citation-copy:not(.has-feedback):focus-visible::after{opacity:1}
+.citation-copy.has-feedback .citation-feedback{opacity:1}
+.citation-copy.is-copied .citation-feedback{color:#3d6e5d;background:#e2ece5}
+.citation-copy.is-copied pre{border-color:#a9bfba}
 .figure-dialog{border:0;border-radius:8px;width:min(1350px,94vw);max-height:92vh;padding:40px;background:white;color:var(--ink)}
 .figure-dialog::backdrop{background:#182829ad;backdrop-filter:blur(8px)}
 .figure-dialog h2{font-size:32px;padding-right:40px;margin-bottom:30px}

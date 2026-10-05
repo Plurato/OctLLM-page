@@ -425,10 +425,39 @@
   if (typeof release.citation === 'string' && release.citation.trim()) {
     document.getElementById('citation').hidden = false;
     document.getElementById('bibtex').textContent = release.citation.trim();
-    document.getElementById('copy-citation').addEventListener('click', async () => {
-      const status = document.getElementById('copy-status');
-      try { await navigator.clipboard.writeText(release.citation.trim()); status.textContent = 'Citation copied.'; }
-      catch { status.textContent = 'Select the citation above to copy it.'; }
+    const copyArea = document.getElementById('copy-citation');
+    const status = document.getElementById('copy-status');
+    let feedbackTimer;
+    let copying = false;
+    const copyCitation = async () => {
+      if (copying) return;
+      copying = true;
+      clearTimeout(feedbackTimer);
+      try {
+        await navigator.clipboard.writeText(release.citation.trim());
+        status.textContent = 'Copied to clipboard';
+        copyArea.classList.add('is-copied');
+      } catch {
+        status.textContent = 'Select text to copy';
+        copyArea.classList.remove('is-copied');
+      } finally {
+        copying = false;
+      }
+      copyArea.classList.add('has-feedback');
+      feedbackTimer = setTimeout(() => {
+        copyArea.classList.remove('has-feedback', 'is-copied');
+        status.textContent = '';
+      }, 2400);
+    };
+    copyArea.addEventListener('click', () => {
+      const selection = window.getSelection();
+      if (selection && !selection.isCollapsed && copyArea.contains(selection.anchorNode)) return;
+      copyCitation();
+    });
+    copyArea.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      copyCitation();
     });
   }
 })();
