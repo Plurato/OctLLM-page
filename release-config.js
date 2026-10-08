@@ -5,6 +5,7 @@ window.OCTLLM_RELEASE = {
   paper: "https://arxiv.org/abs/2610.02388",
   code: "https://github.com/octree-nn/octllm.git",
   model: "https://huggingface.co/Plurato123/OctLLM",
+  demo: "https://huggingface.co/spaces/hugging-apps/octllm",
   citation: `@misc{dan2026octreesexplicit3dlanguage,
   title={Octrees as an Explicit 3D Language},
   author={Ran Dan and Si-Tong Wei and Pengfei Xiong

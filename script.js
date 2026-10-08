@@ -399,7 +399,7 @@
   viewport.addEventListener('pointercancel', () => { swipe = null; });
 
   // Activate resource links when their release URLs are available.
-  ['paper', 'code', 'model'].forEach(key => {
+  ['paper', 'code', 'model', 'demo'].forEach(key => {
     if (typeof release[key] !== 'string' || !release[key].trim()) return;
     try {
       const url = new URL(release[key], location.href);
